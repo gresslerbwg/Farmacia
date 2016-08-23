@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+xmlns:h="http://java.sun.com/jsf/html"
+xmlns:f="http://java.sun.com/jsf/core"
+xmlns:p="http://primefaces.org/ui"
+xmlns:ui="http://java.sun.com/jsf/facelets"
+template="/templates/modeloSistema.xhtml">
+
+<ui:define name="menu">
+	<ui:include src="/includes/menu.xhtml"/>
+</ui:define>
+
+<ui:define name="conteudo">
+<h:form id="frmProdutos">
+<p:dataTable id="tbProdutos" widgetVar="tabProdutos" 
+emptyMessage="Nenhum registro encontrado!"
+value="#{MBProduto.produtos}"
+var="produto"
+filteredValue="#{MBProduto.produtosFiltrado}"
+paginator="true"
+rows="6">
+	<f:facet name="header">Lista de produtos</f:facet>
+    <p:column headerText="Código" sortBy="#{produto.codigo}" filterBy="#{produto.codigo}">
+        <h:outputText value="#{produto.codigo}" />
+    </p:column>
+ 
+    <p:column headerText="Descrição" sortBy="#{produto.descricao}" filterBy="#{produto.descricao}">
+        <h:outputText value="#{produto.descricao}"/>
+    </p:column>
+    
+    <p:column headerText="Preço" sortBy="#{produto.preco}" filterBy="#{produto.preco}">
+        <h:outputText value="#{produto.preco}"/>
+    </p:column>
+    
+    <p:column headerText="Quantidade" sortBy="#{produto.quantidade}" filterBy="#{produto.quantidade}">
+        <h:outputText value="#{produto.quantidade}"/>
+    </p:column>
+    
+    <p:column headerText="Fornecedor" sortBy="#{produto.fornecedor.descricao}" filterBy="#{produto.fornecedor.descricao}">
+        <h:outputText value="#{produto.fornecedor.descricao}"/>
+    </p:column>
+    
+    <p:column headerText="Opções">
+        <p:commandButton icon="ui-icon-trash" >
+        </p:commandButton>
+        <p:commandButton icon="ui-icon-pencil" >
+        </p:commandButton>
+    </p:column>
+    
+    <f:facet name="footer"><p:commandButton value="Novo"  actionListener="#{MBProduto.preparaNovo}" oncomplete="PF('dlgProdNovo').show();" update=":frmNovoProd:pnNovoProd"/></f:facet>
+</p:dataTable>
+</h:form>
+
+
+<p:dialog widgetVar="dlgProdNovo" draggable="false" closable="false" resizable="false" header="Cadastrar novo produto" modal="true" appendTo="@(body)" update=":frmNovoProd:pnNovoProd :msgGlobal">
+<h:form id="frmNovoProd">
+<h:panelGrid id="pnNovoProd" columns="2">
+<p:outputLabel value="Descrição"/>
+<p:inputText size="30" maxlength="50" value="#{MBProduto.produto.descricao}" />
+<p:outputLabel value="Preço"/>
+<p:inputText size="10" maxlength="10" value="#{MBProduto.produto.preco}" />
+<p:outputLabel value="Quantidade"/>
+<p:inputText size="10" maxlength="10" value="#{MBProduto.produto.quantidade}" />
+<p:outputLabel value="Fornecedor"/>
+<p:selectOneMenu value="#{MBProduto.produto.fornecedor.codigo}" filter="true">
+<f:selectItem itemValue="" itemLabel="Selecione um fornecedor" />
+<f:selectItems value="#{MBProduto.comboFornecedor}" 
+var="fornecedor"
+itemValue="#{fornecedor.codigo}"
+itemLabel="#{fornecedor.descricao}"
+>
+</f:selectItems>
+</p:selectOneMenu>
+</h:panelGrid>
+<h:panelGrid columns="2">
+<p:commandButton value="Gravar" actionListener="#{MBProduto.novo}" oncomplete="PF('dlgProdNovo').hide(); PF('tabProdutos').clearFilters();" update=":frmProdutos:tbProdutos :msgGlobal"/>
+<p:commandButton value="Cancelar" onclick="PF('dlgProdNovo').hide();"/>
+</h:panelGrid>
+</h:form>
+</p:dialog>
+
+
+</ui:define>
+</ui:composition>
